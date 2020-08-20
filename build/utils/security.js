@@ -8,6 +8,7 @@ let crypto = require('crypto');
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
+const index_1 = require("../index");
 const global_1 = __importDefault(require("./global"));
 /**
  * @classdesc Container class of api security functions.
@@ -108,6 +109,19 @@ class Security {
      */
     static hashPassword(password) {
         return crypto.createHash('sha256').update(password).digest('hex');
+    }
+    static cache(req, res, next) {
+        const { id } = req.params;
+        index_1.client.get(id, (err, data) => {
+            if (err)
+                throw err;
+            if (data !== null) {
+                res.send(data);
+            }
+            else {
+                next();
+            }
+        });
     }
 }
 exports.Security = Security;

@@ -254,18 +254,14 @@ class alertController {
    * @type {Promise<void>} Void type promise.
    */
     public async addAlerts(req: Request, res: Response): Promise<void> {
-        let { hash } = req.body;
+
         //aqui desencriptar los datos
         let data: NoveltyInterface = {
             descripcion: req.body.descripcion,
             idusuarioReporta: req.body.idusuarioReporta,
             idusuarioReportado: req.body.idusuarioReportado
         }
-        let hashInterno = Security.hashJSON(data);
-        if (hashInterno != hash) {
-            res.status(401).json({ log: "Violación de integridad de datos, hash invalido." });
-            return;
-        }
+        
         novelty.create(data).then((resp: any) => {
             if (resp._options.isNewRecord) {
                 res.status(202).json(

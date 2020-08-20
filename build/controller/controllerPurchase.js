@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const global_1 = __importDefault(require("../utils/global"));
-const security_1 = require("../utils/security");
 /**
  * @const purchase
  * @desc Import Purchase model from data base.
@@ -155,7 +154,6 @@ class purchaseController {
     */
     postData(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            let { hash } = req.body;
             let purchase = {
                 idcompra: req.body.idcompra,
                 idusuario: req.body.idusuario,
@@ -165,12 +163,6 @@ class purchaseController {
             purchase.horaEntrega = new Date();
             purchase.createdAt = new Date();
             purchase.updatedAt = new Date();
-            let hashInterno = security_1.Security.hashJSON(purchase);
-            //purchase.createdAt = new Date();
-            /* if (hashInterno != hash) {
-               res.status(401).json({ log: "Violación de integridad de datos, hash invalido.", hash, hashInterno });
-               return;
-             }*/
             purchases.create(purchase).then((rs) => {
                 if (rs._options.isNewRecord) {
                     res.status(202).json({

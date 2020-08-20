@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const global_1 = __importDefault(require("../utils/global"));
-const security_1 = require("../utils/security");
 /**
  * @const Novedad
  * @desc Import of the model New from the database.
@@ -248,18 +247,12 @@ class alertController {
    */
     addAlerts(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            let { hash } = req.body;
             //aqui desencriptar los datos
             let data = {
                 descripcion: req.body.descripcion,
                 idusuarioReporta: req.body.idusuarioReporta,
                 idusuarioReportado: req.body.idusuarioReportado
             };
-            let hashInterno = security_1.Security.hashJSON(data);
-            if (hashInterno != hash) {
-                res.status(401).json({ log: "Violación de integridad de datos, hash invalido." });
-                return;
-            }
             novelty.create(data).then((resp) => {
                 if (resp._options.isNewRecord) {
                     res.status(202).json({

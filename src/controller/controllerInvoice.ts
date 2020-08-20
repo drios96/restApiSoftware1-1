@@ -245,18 +245,13 @@ class invoiceController {
      */
 
     public async postData(req: Request, res: Response): Promise<void> {
-        let { hash } = req.body;
+
         let invoice1: invoiceInterface = {
             idfactura: req.body.idfactura,
             idpedido: req.body.idpedido,
             idpago: req.body.idpago,
         };
 
-        let hashInterno = Security.hashJSON(invoice1);
-        if (hashInterno != hash) {
-            res.status(401).json({ log: "Violación de integridad de datos, hash invalido.", hash, hashInterno });
-            return;
-        }
 
         invoice.create(invoice1).then((rs: any) => {
             if (rs._options.isNewRecord) {

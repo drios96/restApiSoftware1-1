@@ -159,7 +159,7 @@ class purchaseController {
   * @type {Promise<void>} Void Promise.
   */
   public async postData(req: Request, res: Response): Promise<void> {
-    let { hash } = req.body;
+
     let purchase: purchaseInterface = {
       idcompra: req.body.idcompra,
       idusuario: req.body.idusuario,  
@@ -169,12 +169,7 @@ class purchaseController {
     purchase.horaEntrega= new Date();
     purchase.createdAt= new Date();
     purchase.updatedAt= new Date();
-    let hashInterno = Security.hashJSON(purchase);
-    //purchase.createdAt = new Date();
-   /* if (hashInterno != hash) {
-      res.status(401).json({ log: "Violación de integridad de datos, hash invalido.", hash, hashInterno });
-      return;
-    }*/
+
     purchases.create(purchase).then((rs: any) => {
       if (rs._options.isNewRecord) {
         res.status(202).json(

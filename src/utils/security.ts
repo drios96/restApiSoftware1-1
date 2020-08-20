@@ -2,7 +2,7 @@ let crypto = require('crypto');
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
-
+import {client} from  '../index';
 
 
 import global from "./global"
@@ -112,5 +112,18 @@ export class Security {
      */
     public static hashPassword(password: string) {
         return crypto.createHash('sha256').update(password).digest('hex');
+    }
+
+
+    public static cache(req: any, res: any, next: any) {
+        const {id} = req.params;
+        client.get(id, (err: any, data: any)=>{
+            if(err) throw err;
+            if(data !== null) {
+                res.send(data);
+            }else {
+                next();
+            }
+        })
     }
 }

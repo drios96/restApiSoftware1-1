@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.client = void 0;
 /**
  * @classdesc Index class
  * @desc Creation Data: 11/04/2020
@@ -10,10 +11,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const express_1 = __importDefault(require("express"));
 const morgan_1 = __importDefault(require("morgan"));
-const bodyParser = require("body-parser");
-const path = require("path");
-const helmet = require('helmet');
-const expectCt = require('expect-ct');
 const cors_1 = __importDefault(require("cors"));
 const routerOrders_1 = __importDefault(require("./router/routerOrders"));
 const routerPayment_1 = __importDefault(require("./router/routerPayment"));
@@ -22,6 +19,13 @@ const routerUser_1 = __importDefault(require("./router/routerUser"));
 const routerPurchase_1 = __importDefault(require("./router/routerPurchase"));
 const routerLogin_1 = __importDefault(require("./router/routerLogin"));
 const routerInvoice_1 = __importDefault(require("./router/routerInvoice"));
+const redis = require('redis');
+const bodyParser = require("body-parser");
+const path = require("path");
+const helmet = require('helmet');
+const expectCt = require('expect-ct');
+const REDIS_PORT = process.env.PORT || 6379;
+exports.client = redis.createClient(REDIS_PORT);
 class Server {
     constructor() {
         this.app = express_1.default();

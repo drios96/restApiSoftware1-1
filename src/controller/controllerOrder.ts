@@ -134,12 +134,9 @@ class orderController {
             cubiertos: req.body.cubiertos
         }
 
-        let hashInterno = Security.hashJSON(pedido);
+        
         pedido.createdAt = new Date();
-        if (hashInterno != hash) {
-            res.status(401).json({ log: "Violación de integridad de datos, hash invalido." });
-            return;
-        }
+        
         pedidos.create(pedido).then((resp: any) => {
             if (resp._options.isNewRecord) {
                 res.status(202).json(
@@ -271,7 +268,7 @@ class orderController {
         return;
         }
         id = String(id);
-        let { hash } = req.body;
+
         let pedido: ordersInterface = {
             idpedido: req.body.idpedido,
             idcompra: req.body.idcompra,
@@ -281,12 +278,9 @@ class orderController {
             cubiertos: req.body.cubiertos
         }
 
-        let hashInterno = Security.hashJSON(pedido);
+        
         pedido.createdAt = new Date();
-        if (hashInterno != hash) {
-            res.status(401).json({ log: "Violación de integridad de datos, hash invalido." });
-            return;
-        }
+        
 
         pedidos
         .update(pedido, {

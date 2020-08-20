@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const global_1 = __importDefault(require("../utils/global"));
-const security_1 = require("../utils/security");
 /**
  * @const invoice
  * @desc Import the invoice model from the data base.
@@ -228,17 +227,11 @@ class invoiceController {
      */
     postData(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            let { hash } = req.body;
             let invoice1 = {
                 idfactura: req.body.idfactura,
                 idpedido: req.body.idpedido,
                 idpago: req.body.idpago,
             };
-            let hashInterno = security_1.Security.hashJSON(invoice1);
-            if (hashInterno != hash) {
-                res.status(401).json({ log: "Violación de integridad de datos, hash invalido.", hash, hashInterno });
-                return;
-            }
             invoice.create(invoice1).then((rs) => {
                 if (rs._options.isNewRecord) {
                     res.status(202).json({

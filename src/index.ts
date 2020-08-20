@@ -5,13 +5,7 @@
  */
 import express, { Application } from "express";
 import morgan from "morgan";
-const bodyParser = require("body-parser");
-const path = require("path");
-const helmet = require('helmet');
-const expectCt = require('expect-ct');
-
 import cors from "cors";
-
 import Ordersrouter from "./router/routerOrders";
 import Paymentrouter from "./router/routerPayment";
 import Noveltyrouter from "./router/routerNovelty";
@@ -19,6 +13,13 @@ import Userrouter from "./router/routerUser";
 import routerPurchase from "./router/routerPurchase";
 import Loginrouter from "./router/routerLogin";
 import routerInvoice from "./router/routerInvoice";
+const {init, redis} = require('redis');
+const bodyParser = require("body-parser");
+const path = require("path");
+const helmet = require('helmet');
+const expectCt = require('expect-ct');
+const REDIS_PORT = process.env.PORT || 6379;
+export const client = redis.createClient(REDIS_PORT);
 
 class Server {
   public app: Application;
@@ -26,6 +27,7 @@ class Server {
     this.app = express();
     this.config();
     this.router();
+
   }
 
   config() {

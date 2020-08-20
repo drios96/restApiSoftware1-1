@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const global_1 = __importDefault(require("../utils/global"));
 const rols = require("./../../models").rols;
 const security_1 = require("../utils/security");
+const index_1 = require("../index");
 /**
  * @const User
  * @desc Import User model from data base.
@@ -79,9 +80,6 @@ class userController {
      */
     addUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(req.body);
-            let { hash } = req.body;
-            console.log({ hash });
             let data = {
                 cedula: req.body.cedula,
                 nombre: req.body.nombre,
@@ -92,17 +90,7 @@ class userController {
                 rol: req.body.rol,
                 direccion: req.body.direccion
             };
-            let hashInterno = security_1.Security.hashJSON(data);
-            console.log(hashInterno);
-            console.log(data);
             data.createdAt = new Date();
-            if (hashInterno != hash) {
-                res
-                    .status(401)
-                    .json({ log: "Violación de integridad de datos, hash invalido." });
-                return;
-            }
-            ;
             data.telefono = security_1.Security.encrypt(data.telefono);
             ;
             data.direccion = security_1.Security.encrypt(data.direccion);
@@ -121,9 +109,6 @@ class userController {
                 res.status(400).json({ log: "Sintaxis incorrecta para crear el usuario." });
                 return;
             }, (err) => {
-<<<<<<< HEAD
-                res.status(500).json({ log: err });
-=======
                 if (err.errors) {
                     if (err.errors[0]) {
                         if (err.errors[0].message == "PRIMARY must be unique") {
@@ -133,7 +118,6 @@ class userController {
                     }
                 }
                 res.status(500).json({ log: "Error del servidor, intente nuevamente." });
->>>>>>> 25592586a008df70dbe355eb64d71bf1e8c7d965
                 return;
             });
         });
@@ -180,6 +164,8 @@ class userController {
                 }
                 data.telefono = security_1.Security.decrypt(data.telefono);
                 data.direccion = security_1.Security.decrypt(data.direccion);
+                // ENVIANDO A REDIS
+                index_1.client.setex(id, 3600, data);
                 res.status(200).json(data);
                 return;
             }, (err) => {
@@ -249,7 +235,6 @@ class userController {
                 return;
             }
             id = String(id);
-            let { hash } = req.body;
             let data = {
                 cedula: req.body.cedula,
                 nombre: req.body.nombre,
@@ -261,18 +246,11 @@ class userController {
                 rol: req.body.rol,
                 updatedAt: new Date(),
             };
-            let hashInterno = security_1.Security.hashJSON(data);
             data.telefono = security_1.Security.encrypt(data.telefono);
             ;
             data.direccion = security_1.Security.encrypt(data.direccion);
             ;
             data.contrasenia = security_1.Security.hashPassword(data.contrasenia);
-            if (hashInterno != hash) {
-                res
-                    .status(401)
-                    .json({ log: "Violación de integridad de datos, hash invalido." });
-                return;
-            }
             user
                 .update(data, {
                 where: {

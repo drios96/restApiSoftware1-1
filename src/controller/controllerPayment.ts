@@ -85,20 +85,15 @@ class PaymentController {
    * @type {Promise<void>} Void Promise.
    */
   public async addPayment(req: Request, res: Response): Promise<void> {
-    let { hash } = req.body;
+
     let data: PaymentInterface = {
       idformaPago: req.body.idformaPago,
       imagen: req.body.imagen,
       total: req.body.total,
     };
-    let hashInterno = Security.hashJSON(data);
+    
     data.createdAt = new Date();
-    if (hashInterno != hash) {
-      res
-        .status(401)
-        .json({ log: "Violación de integridad de datos, hash invalido." });
-      return;
-    }
+    
     pagos.create(data).then(
       (resp: any) => {
         if (resp._options.isNewRecord) {

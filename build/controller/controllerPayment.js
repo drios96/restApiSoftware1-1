@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const pagos = require("./../../models").Pagos;
 const formasPagos = require("./../../models").formasPagos;
 const global_1 = __importDefault(require("../utils/global"));
-const security_1 = require("../utils/security");
 /**
  * @classdesc Payment controller class.
  * @desc Creation Date: 11/04/2020
@@ -95,20 +94,12 @@ class PaymentController {
      */
     addPayment(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            let { hash } = req.body;
             let data = {
                 idformaPago: req.body.idformaPago,
                 imagen: req.body.imagen,
                 total: req.body.total,
             };
-            let hashInterno = security_1.Security.hashJSON(data);
             data.createdAt = new Date();
-            if (hashInterno != hash) {
-                res
-                    .status(401)
-                    .json({ log: "Violación de integridad de datos, hash invalido." });
-                return;
-            }
             pagos.create(data).then((resp) => {
                 if (resp._options.isNewRecord) {
                     res.status(202).json({

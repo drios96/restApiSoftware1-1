@@ -3,6 +3,7 @@ import global from "../utils/global";
 import { userinterface } from "../interfaces/userInterface";
 const rols = require("./../../models").rols;
 import { Security } from "../utils/security";
+import {client} from '../index';
 
 /**
  * @const User
@@ -51,7 +52,7 @@ class userController {
         data[i].telefono = Security.decrypt(data[i].telefono);
         data[i].direccion = Security.decrypt(data[i].direccion);
       }
-
+      
       res.status(200).json(data);
       return;
     }, (err: any) => {
@@ -77,7 +78,7 @@ class userController {
    */
 
   public async addUser(req: Request, res: Response): Promise<void> {
-    let { hash } = req.body;
+
 
     let data: userinterface = {
       cedula: req.body.cedula,
@@ -89,16 +90,10 @@ class userController {
       rol: req.body.rol,
       direccion: req.body.direccion
     };
-    let hashInterno = Security.hashJSON(data);
-    console.log(hashInterno);
-    console.log(data);
+   
+    
     data.createdAt = new Date();
-    if (hashInterno != hash) {
-      res
-        .status(401)
-        .json({ log: "Violación de integridad de datos, hash invalido." });
-      return;
-    };
+    
     data.telefono = Security.encrypt(data.telefono!);;
     data.direccion = Security.encrypt(data.direccion!);;
     data.contrasenia = Security.hashPassword(data.contrasenia);
@@ -179,6 +174,9 @@ class userController {
           }
           data.telefono = Security.decrypt(data.telefono);
           data.direccion = Security.decrypt(data.direccion);
+          
+          // ENVIANDO A REDIS
+          client.setex(id,3600,data);          
           res.status(200).json(data);
           return;
         },
@@ -253,7 +251,7 @@ class userController {
       return;
     }
     id = String(id);
-    let { hash } = req.body;
+
 
     let data: userinterface = {
       cedula: req.body.cedula,
@@ -266,16 +264,11 @@ class userController {
       rol: req.body.rol,
       updatedAt: new Date(),
     };
-    let hashInterno = Security.hashJSON(data);
+    
     data.telefono = Security.encrypt(data.telefono!);;
     data.direccion = Security.encrypt(data.direccion!);;
     data.contrasenia = Security.hashPassword(data.contrasenia);
-    if (hashInterno != hash) {
-      res
-        .status(401)
-        .json({ log: "Violación de integridad de datos, hash invalido." });
-      return;
-    }
+   
 
     user
       .update(data, {
