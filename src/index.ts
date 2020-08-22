@@ -13,13 +13,32 @@ import Userrouter from "./router/routerUser";
 import routerPurchase from "./router/routerPurchase";
 import Loginrouter from "./router/routerLogin";
 import routerInvoice from "./router/routerInvoice";
-const {init, redis} = require('redis');
+
 const bodyParser = require("body-parser");
 const path = require("path");
 const helmet = require('helmet');
 const expectCt = require('expect-ct');
-const REDIS_PORT = process.env.PORT || 6379;
-export const client = redis.createClient(REDIS_PORT);
+
+
+
+//production redis url
+let redis_url = process.env.REDIS_URL;
+if (process.env.ENVIRONMENT === 'development') {  
+  require('dotenv').config();  
+  redis_url = "redis://127.0.0.1"; 
+}  
+
+//REDIS SETUP
+export const client = require('redis').createClient(redis_url);
+let Redis = require('ioredis');
+let redis = new Redis(redis_url);
+
+
+
+
+
+
+
 
 class Server {
   public app: Application;

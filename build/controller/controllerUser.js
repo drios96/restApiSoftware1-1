@@ -164,9 +164,14 @@ class userController {
                 }
                 data.telefono = security_1.Security.decrypt(data.telefono);
                 data.direccion = security_1.Security.decrypt(data.direccion);
-                // ENVIANDO A REDIS
-                index_1.client.setex(id, 3600, data);
                 res.status(200).json(data);
+                // ENVIANDO A REDIS
+                //client.set(id,3600,data);  
+                index_1.client.set(id, JSON.stringify(data), (error, result) => {
+                    if (error) {
+                        res.status(500).json({ error: error });
+                    }
+                });
                 return;
             }, (err) => {
                 res.status(500).json({ log: "Error" });

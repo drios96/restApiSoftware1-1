@@ -19,13 +19,20 @@ const routerUser_1 = __importDefault(require("./router/routerUser"));
 const routerPurchase_1 = __importDefault(require("./router/routerPurchase"));
 const routerLogin_1 = __importDefault(require("./router/routerLogin"));
 const routerInvoice_1 = __importDefault(require("./router/routerInvoice"));
-const redis = require('redis');
 const bodyParser = require("body-parser");
 const path = require("path");
 const helmet = require('helmet');
 const expectCt = require('expect-ct');
-const REDIS_PORT = process.env.PORT || 6379;
-exports.client = redis.createClient(REDIS_PORT);
+//production redis url
+let redis_url = process.env.REDIS_URL;
+if (process.env.ENVIRONMENT === 'development') {
+    require('dotenv').config();
+    redis_url = "redis://127.0.0.1";
+}
+//REDIS SETUP
+exports.client = require('redis').createClient(redis_url);
+let Redis = require('ioredis');
+let redis = new Redis(redis_url);
 class Server {
     constructor() {
         this.app = express_1.default();

@@ -110,13 +110,13 @@ class Security {
     static hashPassword(password) {
         return crypto.createHash('sha256').update(password).digest('hex');
     }
-    static cache(req, res, next) {
+    static cacheId(req, res, next) {
         const { id } = req.params;
         index_1.client.get(id, (err, data) => {
             if (err)
                 throw err;
             if (data !== null) {
-                res.send(data);
+                res.status(200).json(data);
             }
             else {
                 next();

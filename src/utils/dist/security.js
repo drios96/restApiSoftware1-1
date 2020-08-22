@@ -1,11 +1,12 @@
-let crypto = require('crypto');
+"use strict";
+exports.__esModule = true;
+exports.Security = void 0;
+var crypto = require('crypto');
 var AES = require("crypto-js/aes");
 var CryptoJS = require("crypto-js");
-const jwt = require("jsonwebtoken");
-import {client} from  '../index';
-
-
-import global from "./global"
+var jwt = require("jsonwebtoken");
+var index_1 = require("../index");
+var global_1 = require("./global");
 /**
  * @classdesc Container class of api security functions.
  * @desc Creation Date: 04/13/2020
@@ -14,9 +15,9 @@ import global from "./global"
  * @version 1.0.0
  * @author Jonathan Quintana <jiquinta@espol.edu.ec>
  */
-
-export class Security {
-  
+var Security = /** @class */ (function () {
+    function Security() {
+    }
     /**
      * @static
      * @method
@@ -27,16 +28,15 @@ export class Security {
      * @desc This method is in charge of generating the sha256 hash of the JSON that is entered as an argument, proceeds to loop through it and store it as a string to later generate the respective hash. <br> Creation Date: 04/13/2020
      * @param {Any} json JSON to calculate the hash.
      */
-    static hashJSON(json: any) {
-        let data: string = "";
-        for (let pass in json) {
+    Security.hashJSON = function (json) {
+        var data = "";
+        for (var pass in json) {
             if (json.hasOwnProperty(pass)) {
-                data += pass + ":" + json[pass] + ","
+                data += pass + ":" + json[pass] + ",";
             }
         }
         return crypto.createHash('sha256').update(data).digest('hex');
-    }
-
+    };
     /**
      * @static
      * @method
@@ -47,12 +47,11 @@ export class Security {
      * @desc It generates an AES encryption of the entered string for its later return and additional processing, we proceed to replace the incompatible characters to be sent in the URL. <br> Creation Date: 04/13/2020
      * @param {String} cadena string to encrypt.
      */
-    public static encrypt(cadena: string) {
-        let pass = global.globals.secretEncryp;
+    Security.encrypt = function (cadena) {
+        var pass = global_1["default"].globals.secretEncryp;
         //.toString().replace(/\//gi, "-")
         return AES.encrypt(cadena, pass).toString();
-    }
-
+    };
     /**
      * @static
      * @method
@@ -63,15 +62,12 @@ export class Security {
      * @desc Decrypts the string that is entered as an argument to transform it into plain text after its processing and regression to the normal AES because the string enters replaced with some characters. <br> Creation Date: 04/13/2020
      * @param {String} cadena string to decrypt.
      */
-    public static decrypt(cadena: string) {
-        let pass = global.globals.secretEncryp;
-        let subString = cadena.replace(/-/gi, "/");
-        let bytes = AES.decrypt(subString, pass);
+    Security.decrypt = function (cadena) {
+        var pass = global_1["default"].globals.secretEncryp;
+        var subString = cadena.replace(/-/gi, "/");
+        var bytes = AES.decrypt(subString, pass);
         return bytes.toString(CryptoJS.enc.Utf8);
-    }
-
-
-
+    };
     /**
      * @static
      * @method
@@ -80,27 +76,27 @@ export class Security {
      * @author Jonathan Quintana <jiquinta@espol.edu.ec>
      * @desc middleware function to verify the validity of the sent session token.
      */
-    public static checkToken(req: any, res: any, next: any) {
-        let bearerHeader = req.headers["authorization"];
+    Security.checkToken = function (req, res, next) {
+        var bearerHeader = req.headers["authorization"];
         if (typeof bearerHeader !== 'undefined') {
-            let bearer = bearerHeader.split(" ");
-            let bearerToken = bearer[1];
-            jwt.verify(bearerToken, global.globals.secretToken, (err: any, data: any) => {
+            var bearer = bearerHeader.split(" ");
+            var bearerToken = bearer[1];
+            jwt.verify(bearerToken, global_1["default"].globals.secretToken, function (err, data) {
                 if (err) {
-                    res.status(401).json({ error:'El token no es válido'})
-                } else {
-                    let dataId = data['id'];
+                    res.status(401).json({ error: 'El token no es válido' });
+                }
+                else {
+                    var dataId = data['id'];
                     res.locals.post = dataId;
                     next();
                     return;
                 }
             });
-        } else {
+        }
+        else {
             res.status(403).json({ log: "No existe el token de sesión." });
         }
-
-    }
-
+    };
     /**
      * @static
      * @method
@@ -110,22 +106,22 @@ export class Security {
      * @desc funtion to convert password to 256-bit (32-byte) hash value.
      * @param {String} password string to generate the sha256.
      */
-    public static hashPassword(password: string) {
+    Security.hashPassword = function (password) {
         return crypto.createHash('sha256').update(password).digest('hex');
-    }
-
-
-    public static cacheId(req: any, res: any, next: any) {
-        const {id} = req.params;
-        client.get(id, (err: any, data: any)=>{
-            if(err) throw err;
-            if(data !== null) {
+    };
+    Security.cacheId = function (req, res, next) {
+        var id = req.params.id;
+        index_1.client.get(id, function (err, data) {
+            if (err)
+                throw err;
+            if (data !== null) {
                 res.status(200).json(data);
-            }else {
+            }
+            else {
                 next();
             }
-        })
-    }
-
-
-}
+        });
+    };
+    return Security;
+}());
+exports.Security = Security;
