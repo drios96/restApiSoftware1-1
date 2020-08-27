@@ -175,8 +175,7 @@ class userController {
           data.telefono = Security.decrypt(data.telefono);
           data.direccion = Security.decrypt(data.direccion);
           res.status(200).json(data);
-          // ENVIANDO A REDIS
-          //client.set(id,3600,data);  
+
           client.set(id, JSON.stringify(data),(error: any, result: any)=> { 
             if(error){                                                
               res.status(500).json({ error: error});                        

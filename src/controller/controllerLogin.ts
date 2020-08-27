@@ -4,7 +4,7 @@ import global from "../utils/global";
 const tokenList: any = {};
 const user = require('./../../models').Usuarios;
 const jwt = require("jsonwebtoken");
-
+import {client} from '../index';
 
 /**
  * @classdesc Login controller class.
@@ -66,7 +66,10 @@ class loginController {
                 "token": token
             }
             tokenList[refreshToken] = response;
-            console.log("tokenlist: ",tokenList);
+            client.set(email, JSON.stringify(data),(error: any, result: any)=> { 
+                if(error){                                                
+                  res.status(500).json({ error: error});                        
+              }})   
             res.status(200).json({ data, token, refreshToken });
             return;
         }, (err: any) => {

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import comprasLogin from "../controller/controllerLogin";
+import { Security } from "../utils/security";
 
 /**
 * @classdesc Login router class.
@@ -19,7 +20,7 @@ class routerLogin {
 
   config(): void {
     //this.router.[post]
-    this.router.post("/usuario", comprasLogin.login);
+    this.router.post("/usuario",Security.cacheLogin, comprasLogin.login);
     this.router.post("/token", comprasLogin.generateToken);
     this.router.post("/reject", comprasLogin.rejectToken);
   }

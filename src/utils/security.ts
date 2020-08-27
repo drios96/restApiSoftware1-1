@@ -127,5 +127,17 @@ export class Security {
         })
     }
 
+    public static cacheLogin(req: any, res: any, next: any) {
+        const {email} = req.params;
+        client.get(email, (err: any, data: any)=>{
+            if(err) throw err;
+            if(data !== null) {
+                res.status(200).json(data);
+            }else {
+                next();
+            }
+        })
+    }
+
 
 }
